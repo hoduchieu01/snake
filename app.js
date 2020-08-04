@@ -31,8 +31,8 @@ app.post('/adminlogin',function(req, res){
 	});
 });
 
-serv.listen(2000);
-console.log("Server is Running on http://localhost:2000 ...");
+serv.listen(process.env.PORT);
+//console.log("Server is Running on http://localhost:2000 ...");
 
 
 
