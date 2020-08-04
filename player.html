@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Snake & Ladder Game</title>
+	 <link rel="stylesheet" href="../assets/styles.css">
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" ></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" ></script>
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ></script>
+ 
+</head>
+<body>
+	<center><h1 id="player_name"></h1></center>
+	<div class="container">
+		<div><canvas width="550" height="550"></canvas></div>
+		<h1 id="status"> </h1>
+		
+	</div>
+		
+	<div class="box">
+		<ul class="list-group up-box" id="ranklist">
+			<li class="list-group-item list-group-item-danger">Avinash Score: 3</li>
+			<li class="list-group-item list-group-item-info">Masood Score: 4</li>
+			</ul>
+		<div class="list-group up-box">
+			<ul id="ranklist2">
+			
+			</ul>
+		</div>
+	
+		<div class="down-box" id="buttonview">
+			<button id="push1" type="button" onclick="dice(1)" class="btn btn-secondary btn-lg" >1</button>
+			<button id="push2" type="button" onclick="dice(2)" class="btn btn-secondary btn-lg" >2</button>
+			<button id="push3" type="button" onclick="dice(3)" class="btn btn-secondary btn-lg" >3</button>
+			<button id="push4" type="button" onclick="dice(4)" class="btn btn-secondary btn-lg" >4</button>
+		</div>
+
+	</div>
+	<script>
+			
+		var socket= io();
+		var name = "<%= name %>";
+		document.getElementById('player_name').innerHTML=name;
+		socket.emit('myname',{'name':name});
+		
+	//Dice Value Sended
+		var dice = function(data){
+			socket.emit('dice',{
+				random: (data)
+			});
+		}
+		
+	//Working with Canvas Chess
+		var canvas = document.querySelector('canvas');
+		var cordinate = [];
+		var teleporter = [];
+		var st_image = new Image();
+		var en_image = new Image();
+		var drone = new Image();
+		var teleport = new Image();
+		var mylogs=[];
+		drone.src = 'assets/drone.png';
+		teleport.src = 'assets/re_teleport.png';
+		st_image.src = 'assets/start.png';
+		en_image.src = 'assets/end.png';
+
+		canvas.width = 545;
+		canvas.height = 545;
+
+		var ctx = canvas.getContext('2d');
+		ctx.font = '40px Arial';
+
+
+	
+		var draw = function(){
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+		//Drawing Board
+
+			var x=55;
+			var y=55;
+
+			for(var i=0; i<10; i++){
+				for(var j=0; j<10; j++){
+					ctx.fillStyle = 'blue';
+					ctx.fillRect(i*x,j*y,50, 50);
+					if(j%2==0 && (i)%2==0){
+					ctx.fillStyle = '#808080';
+					ctx.fillRect(i*x,j*y,50, 50);}else if((j+1)%2==0 && (i+1)%2==0){
+						ctx.fillStyle = '#F8F8FF';
+						ctx.fillRect(i*x,j*y,50, 50);
+					}
+				}
+			}
+			for(var k=0; k< cordinate.length; k++){
+			if(!cordinate[k].isadmin){
+				ctx.beginPath();
+				ctx.arc(cordinate[k].x+18+5*k, cordinate[k].y-10, 15, 0, 2 * Math.PI);
+				ctx.fillStyle = cordinate[k].color;
+				ctx.fill();}
+			}
+			var playerRanklist = ``;
+			for(var k=0; k< cordinate.length; k++){	
+				if(cordinate[k].isadmin){
+					playerRanklist += '<li class="list-group-item list-group-item-danger">'+ cordinate[k].name + '</li>';
+				}else{
+					playerRanklist += '<li class="list-group-item list-group-item-info">'+ cordinate[k].name + '</li>';
+				}
+			}
+			document.getElementById('ranklist').innerHTML = playerRanklist;
+			
+			var playerRanklist2 = ``;
+			for(var k=0; k< mylogs.length; k++){	
+				if(mylogs[k].isadmin){
+					playerRanklist2 += '<li class="list-group-item list-group-item-danger">'+ mylogs[k].name +' Move: '+ mylogs[k].dice + '</li>';
+				}else{
+					playerRanklist2 += '<li class="list-group-item list-group-item-info">'+ mylogs[k].name +' Ask: '+ mylogs[k].dice + '</li>';
+				}
+			}
+			document.getElementById('ranklist2').innerHTML = playerRanklist2;
+			
+
+			for(e in teleporter){
+				var d = teleporter[e];
+				ctx.fillStyle = '#E03A8F';
+
+				ctx.drawImage(drone,d.sx*55,d.sy*55,55,55);
+				ctx.drawImage(teleport,d.ex*55,d.ey*55,55,55);
+			}
+			
+			ctx.drawImage(st_image, 0, 490,55,55);
+			ctx.drawImage(en_image, 0, 0,55,55);
+			requestAnimationFrame(draw);
+		}
+				
+	// SOCKET ID Obtained
+		socket.on('target', function(telep){
+			teleporter = telep;
+		});
+		socket.on('newPositions', function(cordi){
+			cordinate = cordi;
+		});
+		
+		socket.on('logs',function(logs){
+			mylogs = logs;
+		});
+		
+		draw();
+
+	// SOCKET ALERT Obtained
+		socket.on('win', function(msg){
+			alert(msg);
+		});
+		
+	</script>
+</body>
+</html>
