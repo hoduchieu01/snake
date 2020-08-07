@@ -26,7 +26,7 @@ app.get('/adminlogin1610',function(req, res){
 });
 
 serv.listen(process.env.PORT);
-console.log("Server is Running on http://localhost:2000 ...");
+//console.log("Server is Running on http://localhost:2000 ...");
 
 function indexofPlayer(x,y){
 	var bx=0,by=550;
@@ -140,6 +140,7 @@ io.sockets.on('connection',function(socket){
 	
 	socket.emit('target',TELEPORT);
 	socket.on('disconnect', function(){
+		
 		list_socket = list_socket.filter(item => item !== socket)
 		delete SOCKET_LIST[socket.id];
 		delete PLAYER_LIST[socket.id];
@@ -159,23 +160,23 @@ io.sockets.on('connection',function(socket){
 		var chanceDebug = true;
 		if(player.isadmin){
 			console.log(data,'Admin Dice Received');
-			if(LOGS.length>0 && PLAYER_LIST[LOGS[0].id] != undefined){
-				single = true;
-				PLAYER_LIST[LOGS[0].id].previousDice = data.random;
-				PLAYER_LIST[LOGS[0].id].dice = data.random*55;
-				chance++;
-				LOGS.unshift({'id':LOGS[0].id,'name':LOGS[0].name,'dice':data.random,'isadmin':true});
-			}else if(LOGS.length>0){
-				while(PLAYER_LIST[list_socket[chance % list_socket.length].id].isadmin!=false){chance++;console.log("Looping to find player!");}
+			if(LOGS.length>0){
+				if(PLAYER_LIST[LOGS[0].id] != undefined){
+					single = true;
+					PLAYER_LIST[LOGS[0].id].previousDice = data.random;
+					PLAYER_LIST[LOGS[0].id].dice = data.random*55;
+					chance++;
+					LOGS.unshift({'id':LOGS[0].id,'name':LOGS[0].name,'dice':data.random,'isadmin':true});
+				}else{
+					// inserting into error message in LOGS ... 
+					single=true;
+				}
 			}
 		}else{
-			while(PLAYER_LIST[list_socket[chance % list_socket.length].id].isadmin!=false){chance++;console.log("Looping to find player!");}
-			if(chanceDebug || list_socket[chance % list_socket.length] == socket){
-				console.log(data,'Player Dice Received');
-				if(single){
-				LOGS.unshift({'id':socket.id,'name':player.name,'dice':data.random,'isadmin':player.isadmin});
-				single = false;
-				}
+			console.log(data,'Player Dice Received');
+			if(single){
+			LOGS.unshift({'id':socket.id,'name':player.name,'dice':data.random,'isadmin':player.isadmin});
+			single = false;
 			}
 		}
 		
