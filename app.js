@@ -21,14 +21,8 @@ app.post('/playerlogin',function(req, res){
 	});
 });
 
-app.post('/adminlogin',function(req, res){
-	let body = '';
-    req.on('data', chunk => {
-        body += chunk.toString(); // convert Buffer to string
-    });
-    req.on('end', () => {
-		res.render(__dirname + '/admin.html', {'name': body.substr(5)});
-	});
+app.get('/adminlogin',function(req, res){
+	res.sendFile(__dirname + '/admin.html');
 });
 
 serv.listen(process.env.PORT);
