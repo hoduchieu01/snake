@@ -30,7 +30,7 @@
 		<ul class="list-group up-box" id="ranklist">
 			<li class="list-group-item list-group-item-danger">Avinash Score: 3</li>
 			<li class="list-group-item list-group-item-info">Masood Score: 4</li>
-		</ul>
+			</ul>
 	
 		<div class="down-box" id="buttonview">
 			<button id="push1" type="button" onclick="dice(1)" class="btn btn-secondary btn-lg" >1</button>
@@ -107,7 +107,7 @@
 				if(cordinate[k].isadmin){
 					playerRanklist += '<li class="list-group-item list-group-item-danger">'+ cordinate[k].name + '</li>';
 				}else{
-					playerRanklist += '<li class="list-group-item list-group-item-info">'+ cordinate[k].name + '</li>';
+					playerRanklist += '<li class="list-group-item list-group-item-info"> '+ cordinate[k].name + '   Now At: '+ cordinate[k].score + '</li>';
 				}
 			}
 			document.getElementById('ranklist').innerHTML = playerRanklist;
