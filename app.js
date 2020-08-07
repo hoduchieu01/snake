@@ -138,7 +138,7 @@ io.sockets.on('connection',function(socket){
 
 	//drice values
 	socket.on('dice', function(data){
-		var chanceDebug = false;
+		var chanceDebug = true;
 		if(player.isadmin){
 			console.log(data,'Admin Dice Received');
 			if(LOGS.length>0 && PLAYER_LIST[LOGS[LOGS.length-1].id] != undefined){
