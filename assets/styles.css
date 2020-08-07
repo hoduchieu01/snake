@@ -1,7 +1,9 @@
 body{
-    background-image: url('bg_game.png');
-	#background-repeat: no-repeat;
-	margin:0px;
+    background: url('bg_game.png') no-repeat center center fixed; 
+	  -webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: cover;
 }
 
 .container{
