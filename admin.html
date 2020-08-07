@@ -108,7 +108,7 @@
 				if(cordinate[k].isadmin){
 					playerRanklist += '<li class="list-group-item list-group-item-danger">'+ cordinate[k].name + '</li>';
 				}else{
-					playerRanklist += '<li class="list-group-item list-group-item-info">'+ cordinate[k].name + '</li>';
+					playerRanklist += '<li class="list-group-item list-group-item-info"> '+ cordinate[k].name + '   Now At: '+ cordinate[k].score + '</li>';
 				}
 			}
 			document.getElementById('ranklist').innerHTML = playerRanklist;
