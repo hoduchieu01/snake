@@ -21,7 +21,7 @@ app.post('/playerlogin',function(req, res){
 	});
 });
 
-app.get('/adminlogin',function(req, res){
+app.get('/adminlogin1610',function(req, res){
 	res.sendFile(__dirname + '/admin.html');
 });
 
