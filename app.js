@@ -1,5 +1,5 @@
 var express = require('express');
-const { reset } = require('nodemon');
+// const { reset } = require('nodemon');
 var app = express();
 var serv = require('http').Server(app);
 
@@ -25,9 +25,32 @@ app.get('/adminlogin1610',function(req, res){
 	res.sendFile(__dirname + '/admin.html');
 });
 
-serv.listen(process.env.PORT);
-//console.log("Server is Running on http://localhost:2000 ...");
+serv.listen(2000);
+console.log("Server is Running on http://localhost:2000 ...");
 
+function indexofPlayer(x,y){
+	var bx=0,by=550;
+	var i =0;
+	for(i=0;i<101;++i){
+		if(x==bx&&y==by){
+			return i;
+		}
+		if(Math.floor(by)%2 == 0){
+			bx += 55;
+			if(bx==550){
+				by-=55;
+				bx -= 55;
+			}
+		}else if(Math.floor(by)%2 == 1){
+			bx -= 55;
+			if(bx<0){
+				by -= 55;
+				bx += 55;
+			}
+		}
+	}
+	return i;
+}
 
 
 var SOCKET_LIST = {};
@@ -95,6 +118,7 @@ var Player = function(id){
 				break;
 			}
 		}
+		self.score = indexofPlayer(self.x,self.y);
 	}
 	
 
@@ -135,11 +159,12 @@ io.sockets.on('connection',function(socket){
 		var chanceDebug = true;
 		if(player.isadmin){
 			console.log(data,'Admin Dice Received');
-			if(LOGS.length>0 && PLAYER_LIST[LOGS[LOGS.length-1].id] != undefined){
+			if(LOGS.length>0 && PLAYER_LIST[LOGS[0].id] != undefined){
 				single = true;
-				PLAYER_LIST[LOGS[LOGS.length-1].id].previousDice = data.random;
-				PLAYER_LIST[LOGS[LOGS.length-1].id].dice = data.random*55;
+				PLAYER_LIST[LOGS[0].id].previousDice = data.random;
+				PLAYER_LIST[LOGS[0].id].dice = data.random*55;
 				chance++;
+				LOGS.unshift({'id':LOGS[0].id,'name':LOGS[0].name,'dice':data.random,'isadmin':true});
 			}else if(LOGS.length>0){
 				while(PLAYER_LIST[list_socket[chance % list_socket.length].id].isadmin!=false){chance++;console.log("Looping to find player!");}
 			}
@@ -148,7 +173,7 @@ io.sockets.on('connection',function(socket){
 			if(chanceDebug || list_socket[chance % list_socket.length] == socket){
 				console.log(data,'Player Dice Received');
 				if(single){
-				LOGS.push({'id':socket.id,'name':player.name,'dice':data.random,'isadmin':player.isadmin});
+				LOGS.unshift({'id':socket.id,'name':player.name,'dice':data.random,'isadmin':player.isadmin});
 				single = false;
 				}
 			}
