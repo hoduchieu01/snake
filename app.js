@@ -25,7 +25,7 @@ app.get('/adminlogin1610',function(req, res){
 	res.sendFile(__dirname + '/admin.html');
 });
 
-serv.listen(2000);
+serv.listen(process.env.PORT);
 console.log("Server is Running on http://localhost:2000 ...");
 
 function indexofPlayer(x,y){
