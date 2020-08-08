@@ -98,7 +98,7 @@
 			for(var k=0; k< cordinate.length; k++){	
 				if(!cordinate[k].isadmin){
 				ctx.beginPath();
-				ctx.arc(cordinate[k].x+10+2*k, cordinate[k].y-10, 15, 0, 2 * Math.PI);
+				ctx.arc(cordinate[k].x+15+k, cordinate[k].y-10, 15, 0, 2 * Math.PI);
 				ctx.fillStyle = cordinate[k].color;
 				ctx.fill();	}					
 			}
